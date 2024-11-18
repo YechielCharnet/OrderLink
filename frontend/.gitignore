@@ -13,7 +13,7 @@
 
 # misc
 .DS_Store
-.env*
+.env
 .env.development
 .env.production
 .env.test
@@ -33,3 +33,4 @@ yarn-error.log*
 *.swp
 
 
+/backend/.env
