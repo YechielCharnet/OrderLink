@@ -1,0 +1,103 @@
+/* כלליים */
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh; /* מוודא שהדף תופס את כל גובה המסך */
+  display: block; /* מאפשר לדף להתפשט בצורה תקינה */
+}
+
+.App {
+  width: 100%;
+  max-width: 1200px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 2rem;
+  color: #4a90e2;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #4a90e2;
+  color: white;
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #357ab7;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* כפתור יציאה */
+button.logout {
+  background-color: #e74c3c;
+}
+
+button.logout:hover {
+  background-color: #c0392b;
+}
+
+/* אזור תפריטים */
+button + button {
+  margin-top: 10px;
+}
+
+/* כותרות משנה */
+h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* תגובות/ הודעות */
+p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* דף המוצרים */
+.product-page {
+  text-align: center;
+  margin-top: 30px; /* מוסיף רווח מעל דף המוצרים */
+}
+
+.products {
+  display: flex;
+  justify-content: space-around; /* מסדר את המוצרים בצורה מאוזנת */
+  flex-wrap: wrap; /* מאפשר לשים את המוצרים בשורות אם יש הרבה */
+  gap: 20px; /* רווח בין המוצרים */
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  max-width: 250px; /* מגביל את רוחב כרטיס המוצר */
+  flex: 1 0 250px; /* המוצרים יתפשטו עד לרוחב מינימלי של 250px */
+}
+
+.product-card img {
+  width: 100%;
+  height: 250px; /* גובה אחיד לכל התמונות */
+  object-fit: cover; /* שומר על פרופורציות התמונה תוך כיסוי מלא של התיבה */
+  margin-bottom: 10px;
+}
