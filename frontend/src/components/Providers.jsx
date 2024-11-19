@@ -17,11 +17,13 @@ export default function Providers() {
     const [currentProviderId, setCurrentProviderId] = useState(null);
 
     // FETCH: טוען את רשימת הספקים מהשרת
-    // useEffect(() => {
-    //     fetch("http://localhost:5000/providers")
-    //         .then((response) => response.json())
-    //         .then((data) => setProviders(data));
-    // }, []);
+    useEffect(() => {
+        // קריאה לנתונים בכניסה ראשונית בלבד
+        fetch((`${process.env.REACT_APP_API_URL}/users/providers`))
+          .then((response) => response.json())
+          .then((data) => setProviders(data))
+          .catch((error) => console.error("Error fetching providers:", error));
+      }, []); // תלות ריקה מוודאת ש-fetch יבוצע פעם אחת בלבד
 
     const providersList = providers.map((provider) => (
         <li key={provider.id}>
@@ -43,7 +45,7 @@ export default function Providers() {
     // פונקציית הוספת ספק חדש
     const addProvider = (e) => {
         e.preventDefault();
-        fetch("http://localhost:5000/providers", {
+        fetch("http://localhost:5000/users/providers", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -68,7 +70,7 @@ export default function Providers() {
 
     // פונקציית מחיקת ספק לפי ID
     const deleteProvider = (id) => {
-        fetch(`http://localhost:5000/providers/${id}`, {
+        fetch(`http://localhost:5000/users/providers/${id}`, {
             method: "DELETE",
         })
             .then((response) => response.json())
@@ -98,7 +100,7 @@ export default function Providers() {
     // פונקציית עדכון ספק
     const updateProvider = (e) => {
         e.preventDefault();
-        fetch(`http://localhost:5000/providers/${currentProviderId}`, {
+        fetch(`http://localhost:5000/users/providers/${currentProviderId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

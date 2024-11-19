@@ -19,7 +19,7 @@ export default function Orders() {
   const [currentOrderId, setCurrentOrderId] = useState(null);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/orders`)
+    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders`)
       .then((response) => response.json())
       .then((data) => setOrders(data));
   }, []);
@@ -44,7 +44,7 @@ export default function Orders() {
 
   const addOrder = (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/orders", {
+    fetch("http://localhost:5000/Orders/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export default function Orders() {
       
 
   const deleteOrders = (id) => {
-    fetch(`http://localhost:5000/orders/${id}`, {
+    fetch(`http://localhost:5000/Orders/orders/${id}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
@@ -97,7 +97,7 @@ export default function Orders() {
 
   const updateOrder = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/orders/${currentOrderId}`, {
+    fetch(`http://localhost:5000/Orders/orders/${currentOrderId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

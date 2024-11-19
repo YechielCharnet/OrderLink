@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("./db");
 
 // כל ההזמנות
-router.get("/", (req, res) => {
+router.get("/orders", (req, res) => {
   con.query("SELECT * FROM orders", (err, results) => {
     if (err) throw err;
     res.json(results);

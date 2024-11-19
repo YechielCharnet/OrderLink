@@ -18,7 +18,7 @@ export default function Customers() {
 
   useEffect(() => {
     // קריאה לנתונים בכניסה ראשונית בלבד
-    fetch((`${process.env.REACT_APP_API_URL}/customers`))
+    fetch((`${process.env.REACT_APP_API_URL}/users/customers`))
       .then((response) => response.json())
       .then((data) => setCustomers(data))
       .catch((error) => console.error("Error fetching customers:", error));
@@ -43,7 +43,7 @@ export default function Customers() {
 
   const addCustomer = (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/customers", {
+    fetch(`${process.env.REACT_APP_API_URL}/users/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export default function Customers() {
   };
 
   const deleteCustomer = (id) => {
-    fetch(`http://localhost:5000/customers/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/users/customers/${id}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
@@ -85,7 +85,7 @@ export default function Customers() {
 
   const updateCustomer = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/customers/${currentCustomerId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/users/customers/${currentCustomerId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -48,10 +48,26 @@ router.post("/register", (req, res) => {
   });
 });
 
-// פעולה לקבלת כל המשתמשים
-router.get("/", (req, res) => {
-  con.query("SELECT * FROM users ORDER BY id DESC", (err, results) => {
-    if (err) throw err;
+// קבלת כל המשתמשים
+router.get('/users', (req, res) => {
+  con.query('SELECT * FROM users', (err, results) => {
+    if (err) return res.status(500).send(err.message);
+    res.json(results);
+  });
+});
+
+// קבלת כל הלקוחות
+router.get('/customers', (req, res) => {
+  con.query('SELECT * FROM users WHERE role = "customer"', (err, results) => {
+    if (err) return res.status(500).send(err.message);
+    res.json(results);
+  });
+});
+
+// קבלת כל הספקים
+router.get('/providers', (req, res) => {
+  con.query('SELECT * FROM users WHERE role = "provider"', (err, results) => {
+    if (err) return res.status(500).send(err.message);
     res.json(results);
   });
 });
