@@ -1,0 +1,67 @@
+const express = require("express");
+const router = express.Router();
+const con = require("./db");
+
+
+function errorMessage(res, statusCode, message) {
+    res.status(statusCode).json({ success: false, message });  
+}
+  
+router.post("/login", (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) 
+        return errorMessage(res, 400, "Please provide username and password");
+    const sql = "SELECT id, role FROM users WHERE name = ? AND password = ?";
+    con.query(sql, [username, password], (err, results) => {
+        if (err){
+            console.error("Database error:", err);
+            return errorMessage(res, 500, 'Failed to login.');
+        }
+        if (results.length > 0) {
+            const { id, role } = results[0];
+            return res.status(200).json({ success: true, id, role });
+        }
+        else
+            return errorMessage(res, 401, "Incorrect username or password.");
+    });
+})
+  
+router.post("/register", (req, res) => {
+    if (!username || !email || !password || !address || !phone || !role)
+        return errorMessage(res, 400, "Please fill in required fields");
+    const { username, email, password, address, phone, comments, role } = req.body;
+    const sql = "INSERT INTO users (name, email, password, address, phone, comments, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    con.query(sql, [username, email, password, address, phone, comments, role], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ success: false, message: "Failed to register." });
+        }
+        res.json({success: true});
+    });
+});
+
+router.get('/users', (req, res) => {
+    con.query('SELECT * FROM users', (err, results) => {
+        if (err)
+            return res.status(500).send(err.message);
+        res.json(results);
+    });
+});
+
+router.get('/customers', (req, res) => {
+    con.query('SELECT * FROM users WHERE role = "customer"', (err, results) => {
+        if (err)
+            return res.status(500).send(err.message);
+        res.json(results);
+    });
+});
+
+router.get('/providers', (req, res) => {
+    con.query('SELECT * FROM users WHERE role = "provider"', (err, results) => {
+        if (err)
+            return res.status(500).send(err.message);
+        res.json(results);
+    });
+});
+
+module.exports = router;

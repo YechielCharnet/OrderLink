@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
+
 export default function LoginForm({ changeComponent }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      console.log(process.env.REACT_APP_API_URL);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
