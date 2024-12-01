@@ -53,7 +53,7 @@ export default function LoginForm() {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {showLogin && (
         <form onSubmit={handleSubmit}>
           <div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { deactivateUser, updateUser, addUser } from "./functions";
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -17,18 +18,16 @@ export default function Customers() {
   const [currentCustomerId, setCurrentCustomerId] = useState(null);
 
   useEffect(() => {
-    // קריאה לנתונים בכניסה ראשונית בלבד
-    fetch((`${process.env.REACT_APP_API_URL}/users/customers`))
+    fetch(`${process.env.REACT_APP_API_URL}/users/customers`)
       .then((response) => response.json())
       .then((data) => setCustomers(data))
       .catch((error) => console.error("Error fetching customers:", error));
-  }, []); // תלות ריקה מוודאת ש-fetch יבוצע פעם אחת בלבד
+  }, []);
 
   const customersList = customers.map((customer) => (
     <li key={customer.id}>
-      {customer.name} - {customer.address} - {customer.email} - {customer.phone}{" "}
-      - {customer.Paid_total} - {customer.left_to_pay} - {customer.Order_status}
-      <button onClick={() => deleteCustomer(customer.id)}>Delete</button>
+      {customer.name} - {customer.address} - {customer.email} - {customer.phone} - {customer.Paid_total} - {customer.left_to_pay} - {customer.Order_status}
+      <button onClick={() => deactivateUser("customers", customer.id, setCustomers)}>Delete</button>
       <button onClick={() => handleUpdateClick(customer)}>Update</button>
     </li>
   ));
@@ -57,17 +56,17 @@ export default function Customers() {
       });
   };
 
-  const deleteCustomer = (id) => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/customers/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then(() => {
-        setCustomers((prevCustomers) =>
-          prevCustomers.filter((customer) => customer.id !== id)
-        );
-      });
-  };
+  // const deleteCustomer = (id) => {
+  //   fetch(`${process.env.REACT_APP_API_URL}/users/users/${id}`, {
+  //     method: "DELETE",
+  //   })
+  //     .then((response) => response.json())
+  //     .then(() => {
+  //       setCustomers((prevCustomers) =>
+  //         prevCustomers.filter((customer) => customer.id !== id)
+  //       );
+  //     });
+  // };
 
   const handleUpdateClick = (customer) => {
     setFormData({

@@ -169,9 +169,9 @@ export default function CustomerPage() {
     setOrders(sortedOrders);
   };
 
-  // useEffect(() => {
-  //   sortOrders(sortCriterion);
-  // }, [sortCriterion, orders]);
+  useEffect(() => {
+    sortOrders(sortCriterion);
+  }, [sortCriterion, orders]);
 
   const filteredOrders = orders.filter((order) => {
     switch (searchCriterion) {

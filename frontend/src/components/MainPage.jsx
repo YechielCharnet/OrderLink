@@ -23,7 +23,7 @@ function MainPage() {
   };
 
   return (
-    <div className="App">
+    <div className="App" >
       <h1>Welcome!</h1>
 
       <button onClick={toggleCustomers}>Customers</button>

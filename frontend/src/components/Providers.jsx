@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { deactivateUser, updateUser, addUser } from "./functions";
 
 export default function Providers() {
     const [providers, setProviders] = useState([]);
@@ -28,7 +29,7 @@ export default function Providers() {
     const providersList = providers.map((provider) => (
         <li key={provider.id}>
             {provider.name} - {provider.address} - {provider.email} - {provider.phone} - {provider.total_paid_out} - {provider.open_orders} - {provider.comments}
-            <button onClick={() => deleteProvider(provider.id)}>Delete</button>
+            <button onClick={() => deactivateUser("providers", provider.id, setProviders)}>Delete</button>
             <button onClick={() => handleUpdateClick(provider)}>Update</button>
         </li>
     ));
@@ -68,18 +69,18 @@ export default function Providers() {
             });
     };
 
-    // פונקציית מחיקת ספק לפי ID
-    const deleteProvider = (id) => {
-        fetch(`http://localhost:5000/users/providers/${id}`, {
-            method: "DELETE",
-        })
-            .then((response) => response.json())
-            .then(() => {
-                setProviders((prevProviders) =>
-                    prevProviders.filter((provider) => provider.id !== id)
-                );
-            });
-    };
+    // // פונקציית מחיקת ספק לפי ID
+    // const deleteProvider = (id) => {
+    //     fetch(`http://localhost:5000/users/providers/${id}`, {
+    //         method: "DELETE",
+    //     })
+    //         .then((response) => response.json())
+    //         .then(() => {
+    //             setProviders((prevProviders) =>
+    //                 prevProviders.filter((provider) => provider.id !== id)
+    //             );
+    //         });
+    // };
 
     // פונקציה לעריכת ספק נוכחי
     const handleUpdateClick = (provider) => {

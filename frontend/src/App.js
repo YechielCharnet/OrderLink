@@ -31,14 +31,14 @@ const App = () => {
       </Routes>
 
       {/* כפתור התחברות */}
-      <button onClick={() => navigate('/login')} style={buttonStyle}>
+      {/* <button onClick={() => navigate('/login')} style={buttonStyle}>
         Go to Login
-      </button>
+      </button> */}
 
       {/* כפתור הרשמה */}
-      <button onClick={() => navigate('/register')} style={buttonStyle}>
+      {/* <button onClick={() => navigate('/register')} style={buttonStyle}>
         Register
-      </button>
+      </button> */}
 
       {/* פוטר */}
       {/* <footer style={{ backgroundColor: '#f5f5f5', width: '100%', textAlign: 'center', padding: '20px 0', marginTop: '40px' }}> */}

@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
+
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -12,19 +13,31 @@ app.use(express.json());
 const usersRouter = require("./routes/users");
 const ordersRouter = require("./routes/orders");
 const providerOrdersRouter = require("./routes/providerOrders");
-const con = require("./routes/db");
-
+const { sendEmail } = require("./routes/email");
 
 // השתמש בנתיבים הנכונים
 app.use("/users", usersRouter);
 app.use("/orders", ordersRouter);
-app.use("/provider_orders", providerOrdersRouter)
+app.use("/provider_orders", providerOrdersRouter);
+
+// נתיב לשליחת אימייל
+app.post("/send-email", (req, res) => {
+  const { to, subject, text } = req.body;
+
+  if (!to || !subject || !text) {
+    return res.status(400).json({ success: false, message: "Missing email details" });
+  }
+
+  sendEmail(to, subject, text);
+  res.status(200).json({ success: true, message: "Email sent successfully" });
+});
 
 // הפעלת השרת
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
 // const express = require("express");
 // const mysql2 = require('mysql2');
