@@ -1,0 +1,132 @@
+/* עיצוב כללי לטבלה */
+.orders-table {
+    width: 100%;
+    margin-top: 20px;
+    text-align: left;
+    border-collapse: collapse; /* להבטיח גבולות נקיים בין התאים */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* עיצוב לכותרות הטבלה */
+.orders-table th {
+    background-color: #4caf50; /* צבע רקע ירוק */
+    color: white;
+    padding: 10px;
+    border: 1px solid #ddd; /* גבול לתאים */
+}
+
+/* עיצוב לשורות הטבלה */
+.orders-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.orders-table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+/* עיצוב לתאים בטבלה */
+.orders-table td {
+    padding: 10px;
+    border: 1px solid #ddd; /* קווים בין התאים */
+}
+
+/* כפתורים */
+.orders-table button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/* כפתור למחיקת הזמנה */
+.orders-table button.delete-button {
+    background-color: #f44336; /* צבע אדום למחיקה */
+}
+
+/* אפקט על הכפתורים כאשר העכבר עובר מעליהם */
+.orders-table button:hover {
+    opacity: 0.8;
+}
+
+/* עיצוב לטופס הוספת/עדכון הזמנה */
+.orders-form input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.orders-form button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.orders-form button:hover {
+    background-color: #45a049;
+}
+
+.orders-form h2 {
+    margin-bottom: 15px;
+}
+
+/* עיצוב כללי לטבלה */
+.orders-table {
+    width: 100%;
+    margin-top: 20px;
+    text-align: left;
+    border-collapse: collapse; /* להבטיח גבולות נקיים בין התאים */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* עיצוב לכותרות הטבלה */
+  .orders-table th {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border: 1px solid #ddd; /* הוספת גבול לכותרות */
+  }
+  
+  /* עיצוב לשורות הטבלה */
+  .orders-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .orders-table tr:nth-child(odd) {
+    background-color: #fff;
+  }
+  
+  /* עיצוב לתאים בטבלה */
+  .orders-table td {
+    padding: 10px;
+    border: 1px solid #ddd; /* הוספת גבול לתאים */
+  }
+  
+  /* עיצוב לכפתורים */
+  .orders-table button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  
+  .orders-table button.delete-button {
+    background-color: #f44336;
+  }
+  
+  .orders-table button:hover {
+    opacity: 0.8;
+  }
+  

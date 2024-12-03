@@ -31,7 +31,7 @@ const Registration = ({ onRegister }) => {
 
       const data = await response.json();
       console.log("Registration data received:", data);
-      
+
       setRegistered(true); // הגדר את המשתמש כרשום
     } catch (error) {
       alert(error.message);

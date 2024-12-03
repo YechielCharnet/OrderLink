@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-import LoginForm from './components/LoginForm';
-import Registration from './components/Registration';
-import ProductPage from './components/ProductPage';
+import LoginForm from './components/JSX/LoginForm';
+import Registration from './components/JSX/Registration';
+import ProductPage from './components/JSX/ProductPage';
+
 
 const App = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const App = () => {
       </header>
 
       {/* כותרת */}
-      <h1>Welcome to the Product Page</h1>
+      {/* <h1>Welcome to the Product Page</h1> */}
 
       <Routes>
         <Route path="/" element={<ProductPage />} />

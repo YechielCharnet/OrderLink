@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import '../css/Orders.css';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [showOrders, setShowOrders] = useState(false);
-  const [showForm, setShowForm] = useState(false); // מצב להצגת הטופס
+  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     order_date: "",
     customer_id: "",
@@ -25,13 +26,26 @@ export default function Orders() {
   }, []);
 
   const ordersList = orders.map((order) => (
-    <li key={order.id}>
-      {order.order_date} - {order.customer_id} - {order.provider_id} -{" "}
-      {order.product} - {order.quantity} - {order.sum} - {order.paid} -{" "}
-      {order.Order_status} - {order.delivery_date}
-      <button onClick={() => deleteOrders(order.id)}>Delete</button>
-      <button onClick={() => handleUpdateClick(order)}>Update</button>
-    </li>
+    <tr key={order.id}>
+      <td>{order.order_date}</td>
+      <td>{order.customer_id}</td>
+      <td>{order.provider_id}</td>
+      <td>{order.product}</td>
+      <td>{order.quantity}</td>
+      <td>{order.sum}</td>
+      <td>{order.paid}</td>
+      <td>{order.Order_status}</td>
+      <td>{order.delivery_date}</td>
+      <td>
+  <button className="delete-button" onClick={() => deleteOrders(order.id)}>
+    Delete
+  </button>
+</td>
+<td>
+  <button onClick={() => handleUpdateClick(order)}>Update</button>
+</td>
+
+    </tr>
   ));
 
   const handleChange = (e) => {
@@ -45,27 +59,22 @@ export default function Orders() {
   const addOrder = (e) => {
     e.preventDefault();
     fetch("http://localhost:5000/Orders/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setOrders((prevOrders) => [...prevOrders, data]);
+        resetForm();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok " + response.statusText);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setOrders((prevOrders) => [...prevOrders, data]);
-          resetForm();
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          alert("There was an error with your request: " + error.message);
-        })};
-      
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        alert("There was an error with your request: " + error.message);
+      });
+  };
 
   const deleteOrders = (id) => {
     fetch(`http://localhost:5000/Orders/orders/${id}`, {
@@ -104,12 +113,7 @@ export default function Orders() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update order");
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((updatedOrder) => {
         setOrders((prevOrders) =>
           prevOrders.map((c) => (c.id === updatedOrder.id ? updatedOrder : c))
@@ -135,7 +139,7 @@ export default function Orders() {
     });
     setIsUpdating(false);
     setCurrentOrderId(null);
-    setShowForm(false); // להסתיר את הטופס לאחר עדכון או הוספה
+    setShowForm(false);
   };
 
   const toggleShowOrders = () => {
@@ -143,7 +147,7 @@ export default function Orders() {
   };
 
   const toggleShowForm = () => {
-    setShowForm((prev) => !prev); // להחליף את מצב תצוגת הטופס
+    setShowForm((prev) => !prev);
   };
 
   return (
@@ -152,7 +156,26 @@ export default function Orders() {
       <button onClick={toggleShowOrders}>
         {showOrders ? "Hide Orders" : "Show Orders"}
       </button>
-      {showOrders && <ul>{ordersList}</ul>}
+      {showOrders && (
+  <table className="orders-table">
+    <thead>
+      <tr>
+        <th>Order Date</th>
+        <th>Customer ID</th>
+        <th>Provider ID</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Sum</th>
+        <th>Paid</th>
+        <th>Status</th>
+        <th>Delivery Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>{ordersList}</tbody>
+  </table>
+)}
+
 
       <button onClick={toggleShowForm}>
         {showForm ? "Hide Form" : "Add New order"}

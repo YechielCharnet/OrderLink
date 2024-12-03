@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Registration from "./Registration";
-import MainPage from "./MainPage";
-import CustomerPage from "./CustomerPage";
-import ProviderPage from "./ProviderPage";
+import Registration from './Registration'; // מתאים ל- JSX
+import MainPage from './MainPage'; // מתאים ל- JSX
+import CustomerPage from './CustomerPage'; // מתאים ל- JSX
+import ProviderPage from './ProviderPage'; // מתאים ל- JSX
 // import { useNavigate } from "react-router-dom";
 // import { Link } from "react-router-dom";
 // import './login.css';
@@ -11,7 +11,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userRole, setUserRole] = useState(null);
-  const [showLogin, setShowLogin] = useState(true);  // מצב האם להציג את טופס ההתחברות או לא
+  const [showLogin, setShowLogin] = useState(true); // מצב האם להציג את טופס ההתחברות או לא
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +53,9 @@ export default function LoginForm() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       {showLogin && (
         <form onSubmit={handleSubmit}>
           <div>

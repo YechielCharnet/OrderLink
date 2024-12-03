@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import "../App.css";
-import Providers from "./Providers";
-import Orders from "./Orders";
-import Customers from "./Customers";
-import ProviderOrders from "./ProviderOrders";
+import '../../App.css';
+import Providers from './Providers'; 
+import Orders from './Orders'; 
+import Customers from './Customers'; 
+import ProviderOrders from './ProviderOrders'; 
+import Navbar from './Navbar'; 
+
 
 function MainPage() {
   const [showCustomers, setShowCustomers] = useState(false);
@@ -23,14 +25,16 @@ function MainPage() {
   };
 
   return (
-    <div className="App" >
-      <h1>Welcome!</h1>
-
-      <button onClick={toggleCustomers}>Customers</button>
-      <button onClick={toggleProviders}>Providers</button>
-      <button onClick={toggleOrders}>Orders</button>
-      <button onClick={toggleProviderOrders}>Provider Orders</button>
-      <button onClick={logout}>Logout</button>
+    <div className="App">
+      {/* <h1>Welcome!</h1> */}
+      {/* הוספת ה-Navbar */}
+      <Navbar
+        toggleCustomers={toggleCustomers}
+        toggleProviders={toggleProviders}
+        toggleOrders={toggleOrders}
+        toggleProviderOrders={toggleProviderOrders}
+        logout={logout}
+      />
 
       {showCustomers && <Customers />}
       {showProviders && <Providers />}
