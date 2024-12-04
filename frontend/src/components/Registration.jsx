@@ -30,6 +30,7 @@ export default function Registration ({changeComponent}) {
 
     return (
         <div>
+            <h1>Welcome to Order Link</h1>
             <h2>Please register or login</h2>
             <form onSubmit={handleSubmit}>
                 <input
@@ -79,7 +80,7 @@ export default function Registration ({changeComponent}) {
                 />
                 <button type="submit">Register</button>
             </form>
-            <button onClick={() => changeComponent()}>Login</button>
+            <button onClick={() => changeComponent("login")}>Login</button>
         </div>
     );
 };

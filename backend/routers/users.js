@@ -11,15 +11,15 @@ router.post("/login", (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) 
         return errorMessage(res, 400, "Please provide username and password");
-    const sql = "SELECT id, role FROM users WHERE name = ? AND password = ?";
+    const sql = "SELECT role FROM users WHERE name = ? AND password = ?";
     con.query(sql, [username, password], (err, results) => {
         if (err){
             console.error("Database error:", err);
             return errorMessage(res, 500, 'Failed to login.');
         }
         if (results.length > 0) {
-            const { id, role } = results[0];
-            return res.status(200).json({ success: true, id, role });
+            const role = results[0].role;
+            return res.status(200).json({ success: true, role });
         }
         else
             return errorMessage(res, 401, "Incorrect username or password.");
@@ -27,9 +27,12 @@ router.post("/login", (req, res) => {
 })
   
 router.post("/register", (req, res) => {
+
+    console.log("req.body", req.body);
+    
+    const { username, email, password, address, phone, comments, role } = req.body;
     if (!username || !email || !password || !address || !phone || !role)
         return errorMessage(res, 400, "Please fill in required fields");
-    const { username, email, password, address, phone, comments, role } = req.body;
     const sql = "INSERT INTO users (name, email, password, address, phone, comments, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
     con.query(sql, [username, email, password, address, phone, comments, role], (err, result) => {
         if (err) {

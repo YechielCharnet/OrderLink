@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-
 export default function LoginForm({ changeComponent }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -17,6 +18,16 @@ export default function LoginForm({ changeComponent }) {
       });
       if (response.ok){
         console.log('Login successful!');
+        const data = await response.json();
+        switch (data.role) {
+          case "admin":
+            changeComponent("admin");
+            break;
+        
+          default:
+            changeComponent("login");
+            break;
+        }
       }
       else
         response.json().then((data) => alert(data.message));
@@ -27,6 +38,7 @@ export default function LoginForm({ changeComponent }) {
   };
   return (
     <div>
+      <h1>Welcome to Order Link</h1>
       <h2>Please login or register</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -51,7 +63,7 @@ export default function LoginForm({ changeComponent }) {
         </div>
         <button type="submit">Log in</button>
       </form>
-      <button onClick={() => changeComponent()}>Register</button>
+      <button onClick={() => changeComponent("register")}>Register</button>
     </div>
   );
 };
