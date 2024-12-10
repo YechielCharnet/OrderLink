@@ -3,16 +3,20 @@ import './App.css';
 import LoginForm from './components/LoginForm';
 import Registration from './components/Registration';
 import ManagerHP from './components/ManagerHP';
+import Customer from './components/Customer';
 
 function App() {
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [showRegistration, setShowRegistration] = useState(false);
   const [showManagerHP, setShowManagerHP] = useState(false);
+  const [showCustomer, setShowCustomer] = useState(false);
 
   const changeComponent = (component) => {
     setShowLoginForm(false);
     setShowRegistration(false);
     setShowManagerHP(false);
+    setShowCustomer(false);
+    
     switch (component) {
       case "register":
         setShowRegistration(true);
@@ -23,12 +27,17 @@ function App() {
       case "admin":
         setShowManagerHP(true);
         break;
+      case "admin":
+        setShowManagerHP(true);
+        break;
+      case "customer":
+        setShowCustomer(true);
+        break;
+
       default:
         setShowLoginForm(true);
         break;
     }
-    
-    if (component === 'login') setShowLoginForm(true);
   };
 
   return (
@@ -37,6 +46,7 @@ function App() {
       {showLoginForm && <LoginForm changeComponent={changeComponent} />}
       {showRegistration && <Registration changeComponent={changeComponent}/>}
       {showManagerHP && <ManagerHP changeComponent={changeComponent}/>}
+      {showCustomer && <Customer changeComponent={changeComponent}/>}
 
      
     </div>

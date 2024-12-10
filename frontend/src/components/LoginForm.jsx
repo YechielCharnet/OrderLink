@@ -8,7 +8,6 @@ export default function LoginForm({ changeComponent }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(process.env.REACT_APP_API_URL);
       const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
         method: 'POST',
         headers: {
@@ -22,6 +21,9 @@ export default function LoginForm({ changeComponent }) {
         switch (data.role) {
           case "admin":
             changeComponent("admin");
+            break;
+          case "customer":
+            changeComponent("customer");
             break;
         
           default:
@@ -42,9 +44,10 @@ export default function LoginForm({ changeComponent }) {
       <h2>Please login or register</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">Username:</label>
           <input
             type="text"
+            placeholder="Username"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -52,9 +55,10 @@ export default function LoginForm({ changeComponent }) {
           />
         </div>
         <div>
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Password:</label>
           <input
             type="password"
+            placeholder="Password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

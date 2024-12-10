@@ -27,19 +27,39 @@ router.post("/login", (req, res) => {
 })
   
 router.post("/register", (req, res) => {
-
-    console.log("req.body", req.body);
-    
-    const { username, email, password, address, phone, comments, role } = req.body;
-    if (!username || !email || !password || !address || !phone || !role)
+    const { role, username, password, phone, email, address, comments, is_active } = req.body;
+    if (!username || !email || !password || !phone || !role)
         return errorMessage(res, 400, "Please fill in required fields");
-    const sql = "INSERT INTO users (name, email, password, address, phone, comments, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    con.query(sql, [username, email, password, address, phone, comments, role], (err, result) => {
-        if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ success: false, message: "Failed to register." });
+    const checkEmailSql = "SELECT COUNT(*) AS count FROM users WHERE email = ?";
+    con.query(checkEmailSql, [email], (checkErr, checkResult) => {
+        if (checkErr) {
+            console.error("Email check error:", checkErr);
+            return res.status(500).json({ 
+                success: false, 
+                message: "An error occurred during registration" 
+            });
         }
-        res.json({success: true});
+        if (checkResult[0].count > 0) {
+            return res.status(409).json({ 
+                success: false, 
+                message: "Email already exists. Please use a different email." 
+            });
+        }
+        const insertSql = "INSERT INTO users (role, name, password, phone, email, address, comments, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        con.query(insertSql, [role, username, password, phone, email, address, comments, is_active], (err, result) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: "An error occurred during registration" 
+                });
+            }
+            res.status(201).json({ 
+                success: true, 
+                message: "Registration successful",
+                userId: result.insertId 
+            });
+        });
     });
 });
 
