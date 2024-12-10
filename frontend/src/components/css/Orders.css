@@ -130,3 +130,19 @@
     opacity: 0.8;
   }
   
+  .orders-table td.actions-cell {
+    display: flex;
+    justify-content: center; /* ממרכז את הכפתורים בתוך התא */
+    align-items: center;     /* מיישר את הכפתורים אנכית */
+    gap: 10px;               /* רווח בין הכפתורים */
+  }
+  
+  .orders-table th {
+    text-align: center; /* מיישר את הכותרת לאמצע */
+  }
+  
+  .orders-table button {
+    padding: 5px 10px; /* מוסיף ריווח בתוך הכפתורים */
+    min-width: 70px;   /* מבטיח גודל אחיד לכל הכפתורים */
+  }
+  

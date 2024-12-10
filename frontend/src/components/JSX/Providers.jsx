@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { deactivateUser, updateUser, addUser } from "./functions";
+import styles from "../css/Providers.css"; // ייבוא עיצוב
 
 export default function Providers() {
   const [providers, setProviders] = useState([]);
@@ -17,29 +18,13 @@ export default function Providers() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentProviderId, setCurrentProviderId] = useState(null);
 
-  // FETCH: טוען את רשימת הספקים מהשרת
   useEffect(() => {
-    // קריאה לנתונים בכניסה ראשונית בלבד
     fetch(`${process.env.REACT_APP_API_URL}/users/providers`)
       .then((response) => response.json())
       .then((data) => setProviders(data))
       .catch((error) => console.error("Error fetching providers:", error));
-  }, []); // תלות ריקה מוודאת ש-fetch יבוצע פעם אחת בלבד
+  }, []);
 
-  const providersList = providers.map((provider) => (
-    <li key={provider.id}>
-      {provider.name} - {provider.address} - {provider.email} - {provider.phone}{" "}
-      - {provider.total_paid_out} - {provider.open_orders} - {provider.comments}
-      <button
-        onClick={() => deactivateUser("providers", provider.id, setProviders)}
-      >
-        Delete
-      </button>
-      <button onClick={() => handleUpdateClick(provider)}>Update</button>
-    </li>
-  ));
-
-  // מטפל בשינויי טקסט בשדות הקלט
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -48,7 +33,6 @@ export default function Providers() {
     }));
   };
 
-  // פונקציית הוספת ספק חדש
   const addProvider = (e) => {
     e.preventDefault();
     fetch("http://localhost:5000/users/providers", {
@@ -58,12 +42,7 @@ export default function Providers() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         setProviders((prevProviders) => [...prevProviders, data]);
         resetForm();
@@ -74,20 +53,6 @@ export default function Providers() {
       });
   };
 
-  // // פונקציית מחיקת ספק לפי ID
-  // const deleteProvider = (id) => {
-  //     fetch(`http://localhost:5000/users/providers/${id}`, {
-  //         method: "DELETE",
-  //     })
-  //         .then((response) => response.json())
-  //         .then(() => {
-  //             setProviders((prevProviders) =>
-  //                 prevProviders.filter((provider) => provider.id !== id)
-  //             );
-  //         });
-  // };
-
-  // פונקציה לעריכת ספק נוכחי
   const handleUpdateClick = (provider) => {
     setFormData({
       name: provider.name,
@@ -103,7 +68,6 @@ export default function Providers() {
     setShowForm(true);
   };
 
-  // פונקציית עדכון ספק
   const updateProvider = (e) => {
     e.preventDefault();
     fetch(`http://localhost:5000/users/providers/${currentProviderId}`, {
@@ -113,12 +77,7 @@ export default function Providers() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update provider");
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((updatedProvider) => {
         setProviders((prevProviders) =>
           prevProviders.map((provider) =>
@@ -132,7 +91,6 @@ export default function Providers() {
       });
   };
 
-  // מאפס את הטופס
   const resetForm = () => {
     setFormData({
       name: "",
@@ -148,88 +106,63 @@ export default function Providers() {
     setShowForm(false);
   };
 
-  const toggleShowProviders = () => {
-    setShowProviders((prev) => !prev);
-  };
-
-  const toggleShowForm = () => {
-    setShowForm((prev) => !prev);
-  };
-
   return (
     <div>
       <h1>Providers</h1>
-      <button onClick={toggleShowProviders}>
+      <button onClick={() => setShowProviders(!showProviders)}>
         {showProviders ? "Hide Providers" : "Show Providers"}
       </button>
-      {showProviders && <ul>{providersList}</ul>}
-
-      <button onClick={toggleShowForm}>
-        {showForm ? "Hide Form" : "Add New Provider"}
-      </button>
-
+      {showProviders && (
+        <table className="providers-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Total Paid Out</th>
+            <th>Open Orders</th>
+            <th>Comments</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {providers.map((provider) => (
+            <tr key={provider.id}>
+              <td>{provider.name}</td>
+              <td>{provider.address}</td>
+              <td>{provider.email}</td>
+              <td>{provider.phone}</td>
+              <td>{provider.total_paid_out}</td>
+              <td>{provider.open_orders}</td>
+              <td>{provider.comments}</td>
+              <td className="actions-cell">
+                <button className="button-update" onClick={() => handleUpdateClick(provider)}>Update</button>
+                <button className="button-delete" onClick={() => deactivateUser(provider.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      
+      )}
       {showForm && (
-        <>
-          <h2>{isUpdating ? "Update Provider" : "Add New Provider"}</h2>
-          <form onSubmit={isUpdating ? updateProvider : addProvider}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={formData.address || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone"
-              value={formData.phone || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="total_paid_out"
-              placeholder="Total Paid Out"
-              value={formData.total_paid_out || ""}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="open_orders"
-              placeholder="Open Orders"
-              value={formData.open_orders || ""}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="comments"
-              placeholder="Comments"
-              value={formData.comments || ""}
-              onChange={handleChange}
-            />
-            <button type="submit">
-              {isUpdating ? "Update Provider" : "Add Provider"}
-            </button>
-          </form>
-        </>
+        <form
+          className={styles["providers-form"]}
+          onSubmit={isUpdating ? updateProvider : addProvider}
+        >
+          <h2>{isUpdating ? "Update Provider" : "Add Provider"}</h2>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Name"
+            required
+          />
+          {/* שדות נוספים */}
+          <button type="submit">{isUpdating ? "Update" : "Add"}</button>
+        </form>
       )}
     </div>
   );

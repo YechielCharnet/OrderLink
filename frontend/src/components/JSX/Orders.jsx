@@ -36,14 +36,11 @@ export default function Orders() {
       <td>{order.paid}</td>
       <td>{order.Order_status}</td>
       <td>{order.delivery_date}</td>
-      <td>
-  <button className="delete-button" onClick={() => deleteOrders(order.id)}>
-    Delete
-  </button>
+      <td className="actions-cell">
+  <button className="update-button" onClick={() => handleUpdateClick(order)}>Update</button>
+  <button className="delete-button" onClick={() => deleteOrders(order.id)}>Delete</button>
 </td>
-<td>
-  <button onClick={() => handleUpdateClick(order)}>Update</button>
-</td>
+
 
     </tr>
   ));
@@ -58,7 +55,7 @@ export default function Orders() {
 
   const addOrder = (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/Orders/orders", {
+    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders`,  {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

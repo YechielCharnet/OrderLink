@@ -1,0 +1,65 @@
+.providers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .providers-table th,
+  .providers-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+  
+  .providers-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .providers-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .providers-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .actions-cell {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .button-update {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .button-update:hover {
+    background-color: #45a049;
+  }
+  
+  .button-delete {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .button-delete:hover {
+    background-color: #e53935;
+  }
+  
+  .providers-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 20px auto;
+  }
+  

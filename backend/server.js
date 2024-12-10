@@ -13,12 +13,15 @@ app.use(express.json());
 const usersRouter = require("./routes/users");
 const ordersRouter = require("./routes/orders");
 const providerOrdersRouter = require("./routes/providerOrders");
+const con = require("./routes/db");
+const profileRouter = require("./routes/userProfile");
 const { sendEmail } = require("./routes/email");
 
 // השתמש בנתיבים הנכונים
 app.use("/users", usersRouter);
 app.use("/orders", ordersRouter);
 app.use("/provider_orders", providerOrdersRouter);
+app.use("/profile", profileRouter);
 
 // נתיב לשליחת אימייל
 app.post("/send-email", (req, res) => {
