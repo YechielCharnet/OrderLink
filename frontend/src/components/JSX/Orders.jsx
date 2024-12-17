@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import '../css/Orders.css';
+import "../css/Orders.css";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -22,12 +22,13 @@ export default function Orders() {
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/Orders/orders`)
       .then((response) => response.json())
-      .then((data) => setOrders(data));
+      .then((data) => setOrders(data))
+      .catch((error) => console.error("Error fetching orders:", error));
   }, []);
 
   const ordersList = orders.map((order) => (
     <tr key={order.id}>
-      <td>{order.order_date}</td>
+      <td>{new Date(order.order_date).toLocaleDateString()}</td>
       <td>{order.customer_id}</td>
       <td>{order.provider_id}</td>
       <td>{order.product}</td>
@@ -37,11 +38,19 @@ export default function Orders() {
       <td>{order.Order_status}</td>
       <td>{order.delivery_date}</td>
       <td className="actions-cell">
-  <button className="update-button" onClick={() => handleUpdateClick(order)}>Update</button>
-  <button className="delete-button" onClick={() => deleteOrders(order.id)}>Delete</button>
-</td>
-
-
+        <button
+          className="update-button"
+          onClick={() => handleUpdateClick(order)}
+        >
+          Update
+        </button>
+        <button
+          className="delete-button"
+          onClick={() => deleteOrders(order.id)}
+        >
+          Delete
+        </button>
+      </td>
     </tr>
   ));
 
@@ -55,14 +64,19 @@ export default function Orders() {
 
   const addOrder = (e) => {
     e.preventDefault();
-    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders`,  {
+    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         setOrders((prevOrders) => [...prevOrders, data]);
         resetForm();
@@ -74,20 +88,30 @@ export default function Orders() {
   };
 
   const deleteOrders = (id) => {
-    fetch(`http://localhost:5000/Orders/orders/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders/${id}`, {
       method: "DELETE",
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(() => {
         setOrders((prevOrders) =>
           prevOrders.filter((order) => order.id !== id)
         );
+      })
+      .catch((error) => {
+        console.error("Error deleting order:", error);
+        alert("There was an error with your request: " + error.message);
       });
   };
 
   const handleUpdateClick = (order) => {
+    // עדכון טופס עם נתונים של הזמנה
     setFormData({
-      order_date: order.order_date,
+      order_date: new Date(order.order_date).toISOString().split("T")[0],
       customer_id: order.customer_id,
       provider_id: order.provider_id,
       product: order.product,
@@ -99,26 +123,35 @@ export default function Orders() {
     });
     setIsUpdating(true);
     setCurrentOrderId(order.id);
+    setShowForm(true); // הצגת טופס עדכון
   };
 
   const updateOrder = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/Orders/orders/${currentOrderId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/Orders/orders/${currentOrderId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((updatedOrder) => {
         setOrders((prevOrders) =>
-          prevOrders.map((c) => (c.id === updatedOrder.id ? updatedOrder : c))
+          prevOrders.map((order) =>
+            order.id === updatedOrder.id ? updatedOrder : order
+          )
         );
         resetForm();
       })
       .catch((error) => {
         console.error("Error updating order:", error);
+        alert("There was an error with your request: " + error.message);
       });
   };
 
@@ -154,38 +187,35 @@ export default function Orders() {
         {showOrders ? "Hide Orders" : "Show Orders"}
       </button>
       {showOrders && (
-  <table className="orders-table">
-    <thead>
-      <tr>
-        <th>Order Date</th>
-        <th>Customer ID</th>
-        <th>Provider ID</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Sum</th>
-        <th>Paid</th>
-        <th>Status</th>
-        <th>Delivery Date</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>{ordersList}</tbody>
-  </table>
-)}
+        <table className="orders-table">
+          <thead>
+            <tr>
+              <th>Order Date</th>
+              <th>Customer ID</th>
+              <th>Provider ID</th>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Sum</th>
+              <th>Paid</th>
+              <th>Status</th>
+              <th>Delivery Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{ordersList}</tbody>
+        </table>
+      )}
 
-
-      <button onClick={toggleShowForm}>
-        {showForm ? "Hide Form" : "Add New order"}
-      </button>
+      <button onClick={() => setShowForm(true)}>Add New Order</button>
 
       {showForm && (
         <>
-          <h2>{isUpdating ? "Update order" : "Add New order"}</h2>
+          <h2>{isUpdating ? "Update Order" : "Add New Order"}</h2>
           <form onSubmit={isUpdating ? updateOrder : addOrder}>
             <input
-              type="text"
+              type="date"
               name="order_date"
-              placeholder="order_date"
+              placeholder="Order Date"
               value={formData.order_date || ""}
               onChange={handleChange}
               required
@@ -193,7 +223,7 @@ export default function Orders() {
             <input
               type="text"
               name="customer_id"
-              placeholder="customer_id"
+              placeholder="Customer ID"
               value={formData.customer_id || ""}
               onChange={handleChange}
               required
@@ -201,7 +231,7 @@ export default function Orders() {
             <input
               type="text"
               name="product"
-              placeholder="product"
+              placeholder="Product"
               value={formData.product || ""}
               onChange={handleChange}
               required
@@ -209,7 +239,7 @@ export default function Orders() {
             <input
               type="number"
               name="quantity"
-              placeholder="quantity"
+              placeholder="Quantity"
               value={formData.quantity || ""}
               onChange={handleChange}
               required
@@ -217,7 +247,7 @@ export default function Orders() {
             <input
               type="number"
               name="sum"
-              placeholder="sum"
+              placeholder="Sum"
               value={formData.sum || ""}
               onChange={handleChange}
               required
@@ -225,12 +255,11 @@ export default function Orders() {
             <input
               type="number"
               name="paid"
-              placeholder="paid"
+              placeholder="Paid"
               value={formData.paid || ""}
               onChange={handleChange}
               required
             />
-
             <input
               type="text"
               name="Order_status"
@@ -238,11 +267,10 @@ export default function Orders() {
               value={formData.Order_status || ""}
               onChange={handleChange}
             />
-
             <input
               type="text"
               name="delivery_date"
-              placeholder="delivery_date"
+              placeholder="Delivery Date"
               value={formData.delivery_date || ""}
               onChange={handleChange}
               required

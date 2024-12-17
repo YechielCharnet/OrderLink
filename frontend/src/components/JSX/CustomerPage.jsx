@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../css/Customers.css';
 
 const CustomerPage = () => {
   const userId = localStorage.getItem('userId');
@@ -15,45 +16,11 @@ const CustomerPage = () => {
   });
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
-
-  // נתוני המוצרים
   const [products, setProducts] = useState([]);
-  console.log(products);
-  
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
-
-  // טוען את פרטי המשתמש
-  const fetchUserInfo = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Profile/${userId}/profile`);
-      setUserInfo(response.data);
-    } catch (err) {
-      setError("לא ניתן לטעון את פרטי המשתמש.");
-    }
-  };
-
-  // טוען את ההזמנות של המשתמש
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Profile/${userId}/orders`);
-      setOrders(response.data);
-      setFilteredOrders(response.data);  // מגדיר את כל ההזמנות בהתחלה
-    } catch (err) {
-      setError("לא ניתן לטעון את ההזמנות.");
-    }
-  };
-
-  // טוען את המוצרים
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile/products`);
-      setProducts(response.data);
-    } catch (err) {
-      setError("לא ניתן לטעון את המוצרים.");
-    }
-  };
 
   useEffect(() => {
     if (!userId) {
@@ -65,19 +32,50 @@ const CustomerPage = () => {
     }
   }, [userId]);
 
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Profile/${userId}/profile`);
+      setUserInfo(response.data);
+    } catch {
+      setError("לא ניתן לטעון את פרטי המשתמש.");
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Profile/${userId}/orders`);
+      setOrders(response.data);
+      setFilteredOrders(response.data);
+    } catch {
+      setError("לא ניתן לטעון את ההזמנות.");
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/profile/products`);
+      setProducts(response.data);
+    } catch {
+      setError("לא ניתן לטעון את המוצרים.");
+    }
+  };
+
+  const handleUpdateClick = () => setShowForm(true);
+
+  const resetForm = () => {
+    setShowForm(false);
+    setFormData({ name: '', email: '', phone: '', address: '' });
+  };
+
   const updateUser = async (event) => {
     event.preventDefault();
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/profile/${userId}/update`, formData);
       setShowForm(false);
-      fetchUserInfo();  // טוען את פרטי המשתמש מחדש
-    } catch (err) {
+      fetchUserInfo();
+    } catch {
       setError("לא ניתן לעדכן את פרטי המשתמש.");
     }
-  };
-
-  const handleUpdateClick = () => {
-    setShowForm(true);
   };
 
   const handleOrderSubmit = async (event) => {
@@ -95,50 +93,62 @@ const CustomerPage = () => {
       };
       await axios.post(`${process.env.REACT_APP_API_URL}/profile/orders`, orderData);
       setNewOrder('');
-      fetchOrders();  // טוען את ההזמנות מחדש
-    } catch (err) {
+      fetchOrders();
+    } catch {
       setError("לא ניתן להוסיף הזמנה.");
     }
-  };
-
-  const resetForm = () => {
-    setShowForm(false);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      address: ''
-    });
   };
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     const filtered = orders.filter(order =>
       order.id.toString().includes(query) ||
-      order.product.toLowerCase().includes(query)
+      order.product_name.toLowerCase().includes(query)
     );
     setFilteredOrders(filtered);
   };
+  const handleSort = (column) => {
+    const sortedOrders = [...filteredOrders].sort((a, b) => {
+      if (column === 'price') {
+        return a.price - b.price;
+      } else if (column === 'order_date') {
+        return new Date(a.order_date) - new Date(b.order_date);
+      } else if (column === 'status') {
+        return a.status.localeCompare(b.status);
+      }
+      return 0;
+    });
+    setFilteredOrders(sortedOrders);
+  };
+  
 
-  // פונקציה לעדכון בחירת מוצר
-const handleProductChange = (e) => {
-  const productId = e.target.value;
- 
- setSelectedProductId(productId);
+  const handleQuantityChange = (e) => {
+    const newQuantity = parseInt(e.target.value);
+    setQuantity(newQuantity);
+    if (selectedProduct) setPrice(selectedProduct.price * newQuantity);
+  };
 
-  // מצא את המוצר שנבחר מתוך רשימת המוצרים
-  const selectedProduct = products.find(product => product.id === parseInt(productId));
-console.log("selectedProduct -", selectedProduct);
+  const handleProductChange = (e) => {
+    const productId = e.target.value;
+    setSelectedProductId(productId);
+    const selected = products.find(product => product.id === parseInt(productId));
+    setSelectedProduct(selected);
+    if (selected) setPrice(selected.price * quantity);
+  };
 
-  // אם המוצר נמצא, עדכן את המחיר
-  if (selectedProduct) {
-    setPrice(selectedProduct.price);
-  } else {
-    // אם לא נמצא, ננקה את המחיר
-    setPrice(0);
-  }
-};
+  const deleteOrder = async (orderId) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/profile/orders/${orderId}`);
+      fetchOrders();
+    } catch {
+      setError("לא ניתן למחוק את ההזמנה.");
+    }
+  };
 
+  const updateOrder = (orderId) => {
+    // Logic to update order (you can add a form or modal for editing here)
+    console.log(`Update order: ${orderId}`);
+  };
 
   return (
     <div>
@@ -150,47 +160,28 @@ console.log("selectedProduct -", selectedProduct);
         <p><strong>שם:</strong> {userInfo.name}</p>
         <p><strong>טלפון:</strong> {userInfo.phone}</p>
         <p><strong>כתובת:</strong> {userInfo.address}</p>
-        <p><strong>אימייל:</strong> {userInfo.email}</p>
+        <p><strong>אימייל</strong> {userInfo.email}</p>
       </div>
 
       <button onClick={handleUpdateClick}>ערוך פרופיל</button>
       {showForm && (
         <form onSubmit={updateUser}>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="שם"
-          />
-          <input
-            type="text"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            placeholder="אימייל"
-          />
-          <input
-            type="text"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            placeholder="טלפון"
-          />
-          <input
-            type="text"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-            placeholder="כתובת"
-          />
+          {['name', 'email', 'phone', 'address'].map((field) => (
+            <input
+              key={field}
+              type="text"
+              value={formData[field]}
+              onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+              placeholder={field}
+            />
+          ))}
           <button type="submit">עדכן</button>
           <button type="button" onClick={resetForm}>ביטול</button>
         </form>
       )}
 
       <h2>הזמנות</h2>
-      <input
-        type="text"
-        placeholder="חפש הזמנה"
-        onChange={handleSearch}
-      />
+      <input type="text" placeholder="חפש הזמנה" onChange={handleSearch} />
       {orders.length === 0 ? (
         <p>אין הזמנות להצגה.</p>
       ) : (
@@ -202,42 +193,43 @@ console.log("selectedProduct -", selectedProduct);
               <th>סטטוס</th>
               <th>מוצרים</th>
               <th>סכום</th>
+              <th>פעולות</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.order_date}</td>
+                <td>{new Date(order.order_date).toLocaleDateString()}</td>
                 <td>{order.status}</td>
                 <td>{order.product_name}</td>
-                <td>{order.price}</td> {/* כאן מציגים את המחיר של המוצר */}
+                <td>₪{order.price}</td>
+                <td>
+                  <button onClick={() => updateOrder(order.id)}>עדכן</button>
+                  <button onClick={() => deleteOrder(order.id)}>מחק</button>
+               
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
 
-      <h2>הוסף הזמנה</h2>
+      <h3>הוסף הזמנה חדשה</h3>
       <form onSubmit={handleOrderSubmit}>
-        <select onChange={handleProductChange}>
+        <select value={selectedProductId} onChange={handleProductChange}>
           <option value="">בחר מוצר</option>
           {products.map(product => (
-            <option key={product.id} value={product.id} id={product.id}>
-              {product.name} {/* כאן אנו מציגים את שם המוצר */}
-            </option>
+            <option key={product.id} value={product.id}>{product.name}</option>
           ))}
         </select>
-
         <input
           type="number"
           value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          placeholder="כמות"
+          onChange={handleQuantityChange}
+          min="1"
         />
-
         <p>מחיר: ₪{price}</p>
-
         <button type="submit">הוסף הזמנה</button>
       </form>
     </div>

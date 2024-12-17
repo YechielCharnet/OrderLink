@@ -1,247 +1,125 @@
 import React, { useState, useEffect } from "react";
 
-export default function ProviderOrders() {
-  const [providerOrders, setProviderOrders] = useState([]);
-  const [showOrders, setShowOrders] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+const ProviderOrders = () => {
+  const [providerOrders, setProviderOrders] = useState([]); // רשימת ההזמנות
   const [formData, setFormData] = useState({
-    order_date: "",
-    customer_id: "",
     provider_id: "",
+    order_id: "",
+    order_date: "",
+    order_to: "",
     product: "",
-    quantity: 0,
-    sum: 0,
+    quantity: "",
+    price: "",
     paid: 0,
-    Order_status: "",
-    delivery_date: "",
+    status: 0,
+    comments: "",
   });
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [currentProviderOrderId, setCurrentProviderOrderId] = useState(null);
 
+  // שליפת כל ההזמנות מהשרת
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/provider-orders`)
-      .then((response) => response.json())
-      .then((data) => setProviderOrders(data));
+    fetch("http://localhost:5000/provider_orders")
+      .then((res) => res.json())
+      .then((data) => setProviderOrders(data))
+      .catch((err) => console.error("שגיאה בקבלת ההזמנות:", err));
   }, []);
 
-  const providerOrdersList = providerOrders.map((order) => (
-    <li key={order.id}>
-      {order.order_date} - {order.customer_id} - {order.provider_id} -{" "}
-      {order.product} - {order.quantity} - {order.sum} - {order.paid} -{" "}
-      {order.Order_status} - {order.delivery_date}
-      <button onClick={() => deleteOrder(order.id)}>Delete</button>
-      <button onClick={() => handleUpdateClick(order)}>Update</button>
-    </li>
-  ));
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const addOrder = (e) => {
+  // הוספת הזמנה חדשה
+  const handleSubmit = (e) => {
+    console.log("formData:", formData);
+    
     e.preventDefault();
-    fetch("http://localhost:5000/provider-orders", {
+    fetch("http://localhost:5000/provider_orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
+      .then((res) => res.json())
+      .then((newOrder) => {
+        setProviderOrders([...providerOrders, newOrder]);
+        setFormData({
+          provider_id: "",
+          order_id: "",
+          order_date: "",
+          order_to: "",
+          product: "",
+          quantity: "",
+          price: "",
+          paid: 0,
+          status: 0,
+          comments: "",
+        });
       })
-      .then((data) => {
-        setProviderOrders((prevOrders) => [...prevOrders, data]);
-        resetForm();
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        alert("There was an error with your request: " + error.message);
-      });
+      .catch((err) => console.error("שגיאה בהוספת ההזמנה:", err));
   };
 
-  const deleteOrder = (id) => {
-    fetch(`http://localhost:5000/provider-orders/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then(() => {
-        setProviderOrders((prevOrders) =>
-          prevOrders.filter((order) => order.id !== id)
-        );
-      });
-  };
-
-  const handleUpdateClick = (order) => {
-    setFormData({
-      order_date: order.order_date,
-      customer_id: order.customer_id,
-      provider_id: order.provider_id,
-      product: order.product,
-      quantity: order.quantity,
-      sum: order.sum,
-      paid: order.paid,
-      Order_status: order.Order_status,
-      delivery_date: order.delivery_date,
-    });
-    setIsUpdating(true);
-    setCurrentProviderOrderId(order.id);
-    setShowForm(true); // Show form when updating
-  };
-
-  const updateOrder = (e) => {
-    e.preventDefault();
-    fetch(`http://localhost:5000/provider-orders/${currentProviderOrderId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update provider order");
-        }
-        return response.json();
-      })
-      .then((updatedOrder) => {
-        setProviderOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order.id === updatedOrder.id ? updatedOrder : order
-          )
-        );
-        resetForm();
-      })
-      .catch((error) => {
-        console.error("Error updating provider order:", error);
-      });
-  };
-
-  const resetForm = () => {
-    setFormData({
-      order_date: "",
-      customer_id: "",
-      provider_id: "",
-      product: "",
-      quantity: 0,
-      sum: 0,
-      paid: 0,
-      Order_status: "",
-      delivery_date: "",
-    });
-    setIsUpdating(false);
-    setCurrentProviderOrderId(null);
-    setShowForm(false);
-  };
-
-  const toggleShowOrders = () => {
-    setShowOrders((prev) => !prev);
-  };
-
-  const toggleShowForm = () => {
-    setShowForm((prev) => !prev);
+  // עדכון טופס
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
     <div>
-      <h1>Orders</h1>
-      <button onClick={toggleShowOrders}>
-        {showOrders ? "Hide Orders" : "Show Orders"}
-      </button>
-      {showOrders && <ul>{providerOrdersList}</ul>}
+      <h2>הזמנות ספקים</h2>
+      {/* טבלה להצגת כל ההזמנות */}
+      <table border="1">
+        <thead>
+          <tr>
+            <th>מזהה ספק</th>
+            <th>מזהה הזמנה</th>
+            <th>תאריך הזמנה</th>
+            <th>תאריך יעד</th>
+            <th>מוצר</th>
+            <th>כמות</th>
+            <th>מחיר</th>
+            <th>שולם</th>
+            <th>סטטוס</th>
+            <th>הערות</th>
+          </tr>
+        </thead>
+        <tbody>
+          {providerOrders.map((order) => (
+            <tr key={order.id}>
+              <td>{order.provider_id}</td>
+              <td>{order.order_id}</td>
+              <td>{new Date(order.order_date).toLocaleDateString()}</td>
+              <td>{new Date(order.order_to).toLocaleDateString()}</td>
+              <td>{order.product}</td>
+              <td>{order.quantity}</td>
+              <td>{order.price}</td>
+              <td>{order.paid ? "כן" : "לא"}</td>
+              <td>{order.status ? "הושלם" : "בתהליך"}</td>
+              <td>{order.comments}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <button onClick={toggleShowForm}>
-        {showForm ? "Hide Form" : "Add New Order"}
-      </button>
-
-      {showForm && (
-        <>
-          <h2>{isUpdating ? "Update Order" : "Add New Order"}</h2>
-          <form onSubmit={isUpdating ? updateOrder : addOrder}>
-            <input
-              type="text"
-              name="order_date"
-              placeholder="Order Date"
-              value={formData.order_date || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="customer_id"
-              placeholder="Customer ID"
-              value={formData.customer_id || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="provider_id"
-              placeholder="Provider ID"
-              value={formData.provider_id || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="product"
-              placeholder="Product"
-              value={formData.product || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="quantity"
-              placeholder="Quantity"
-              value={formData.quantity || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="sum"
-              placeholder="Sum"
-              value={formData.sum || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="paid"
-              placeholder="Paid"
-              value={formData.paid || ""}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="Order_status"
-              placeholder="Order Status"
-              value={formData.Order_status || ""}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="delivery_date"
-              placeholder="Delivery Date"
-              value={formData.delivery_date || ""}
-              onChange={handleChange}
-              required
-            />
-            <button type="submit">
-              {isUpdating ? "Update Order" : "Add Order"}
-            </button>
-          </form>
-        </>
-      )}
+   
+      <h3>הוספת הזמנה חדשה</h3>
+      <form onSubmit={handleSubmit}>
+        <input name="provider_id" placeholder="מזהה ספק" onChange={handleChange} value={formData.provider_id} required />
+        <input name="order_id" placeholder="מזהה הזמנה" onChange={handleChange} value={formData.order_id} required />
+        <input type="date" name="order_date" onChange={handleChange} value={formData.order_date} required />
+        <input type="date" name="order_to" placeholder="תאריך יעד" onChange={handleChange} value={formData.order_to} />
+        <input name="product" placeholder="מוצר" onChange={handleChange} value={formData.product} required />
+        <input name="quantity" placeholder="כמות" onChange={handleChange} value={formData.quantity} />
+        <input name="price" placeholder="מחיר" onChange={handleChange} value={formData.price} />
+        <select name="paid" onChange={handleChange} value={formData.paid}>
+          <option value="0">לא שולם</option>
+          <option value="1">שולם</option>
+        </select>
+        <select name="status" onChange={handleChange} value={formData.status}>
+          <option value="0">בתהליך</option>
+          <option value="1">הושלם</option>
+        </select>
+        <input name="comments" placeholder="הערות" onChange={handleChange} value={formData.comments} />
+        <button type="submit">הוסף הזמנה</button>
+      </form>
     </div>
   );
-}
+};
+
+export default ProviderOrders;

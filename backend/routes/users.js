@@ -246,6 +246,42 @@ router.patch("/:type/:id/deactivate", (req, res) => {
         }
     );
 });
+// עדכון משתמש
+router.put("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, address, email, phone, total_paid, left_to_pay, open_orders, comments, role } = req.body;
+
+  const sql = `
+    UPDATE users
+    SET name = ?, address = ?, email = ?, phone = ?, total_paid = ?, left_to_pay = ?, open_orders = ?, comments = ?, role = ?
+    WHERE id = ?
+  `;
+  con.query(sql, [name, address, email, phone, total_paid, left_to_pay, open_orders, comments, role, id], (err, result) => {
+    if (err) {
+      console.error("Error updating user:", err);
+      return res.status(500).json({ success: false, message: "שגיאה בעדכון פרטי המשתמש." });
+    }
+    res.json({ success: true, message: "פרטי המשתמש עודכנו בהצלחה." });
+  });
+});
+
+// מחיקת משתמש (סימון כלא פעיל)
+router.patch("/:type/:id/deactivate", (req, res) => {
+  const { type, id } = req.params;
+
+  if (!["customer", "provider"].includes(type)) {
+    return res.status(400).json({ error: "Invalid type specified" });
+  }
+
+  const sql = "UPDATE users SET is_active = 0 WHERE id = ?";
+  con.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error deactivating user:", err);
+      return res.status(500).json({ error: `Failed to deactivate ${type}` });
+    }
+    res.json({ success: true, message: `${type} deactivated successfully.` });
+  });
+});
 
 module.exports = router;
 

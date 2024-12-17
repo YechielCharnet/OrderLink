@@ -4,7 +4,7 @@ import styles from "../css/Providers.css"; // ייבוא עיצוב
 
 export default function Providers() {
   const [providers, setProviders] = useState([]);
-  const [showProviders, setShowProviders] = useState(false);
+  const [showProviders, setShowProviders] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -35,7 +35,7 @@ export default function Providers() {
 
   const addProvider = (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/users/providers", {
+    fetch(`${process.env.REACT_APP_API_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function Providers() {
 
   const updateProvider = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/users/providers/${currentProviderId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/${currentProviderId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
